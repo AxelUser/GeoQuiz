@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         Question(R.string.question_americas, true),
         Question(R.string.question_asia, true))
 
+    private val answeredIdx = hashSetOf<Int>()
+
     private var currentIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +31,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.trueButton.setOnClickListener { view: View ->
+            setEnabledForButtons(false)
             checkQuestion(true)
         }
 
         binding.falseButton.setOnClickListener { view: View ->
+            setEnabledForButtons(false)
             checkQuestion(false)
         }
 
@@ -71,11 +75,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
+        with(!answeredIdx.contains(currentIndex)) {
+            setEnabledForButtons(this)
+        }
         binding.questionTextView.setText(questionTextResId)
+    }
+
+    private fun setEnabledForButtons(enabled: Boolean) {
+        binding.falseButton.isEnabled = enabled
+        binding.trueButton.isEnabled = enabled
     }
 
     private fun checkQuestion(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
+        answeredIdx += currentIndex
 
         val messageResId = if (userAnswer == correctAnswer) {
             R.string.correct_toast
