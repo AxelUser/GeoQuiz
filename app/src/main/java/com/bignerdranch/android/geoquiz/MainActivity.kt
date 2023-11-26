@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.questionTextView.setOnClickListener {
-            showNextQuestion()
+            changeQuestion(Direction.PREV)
         }
 
         binding.trueButton.setOnClickListener { view: View ->
@@ -36,8 +36,12 @@ class MainActivity : AppCompatActivity() {
             checkQuestion(false)
         }
 
+        binding.prevButton.setOnClickListener {
+            changeQuestion(Direction.PREV)
+        }
+
         binding.nextButton.setOnClickListener {
-            showNextQuestion()
+            changeQuestion(Direction.NEXT)
         }
 
         updateQuestion()
@@ -60,8 +64,16 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showNextQuestion() {
-        currentIndex = (currentIndex + 1) % questionBank.size
+    private enum class Direction {
+        PREV,
+        NEXT
+    }
+
+    private fun changeQuestion(direction: Direction) {
+        currentIndex = when(direction) {
+            Direction.PREV -> if (currentIndex == 0) questionBank.size - 1 else (currentIndex - 1) % questionBank.size
+            Direction.NEXT -> (currentIndex + 1) % questionBank.size
+        }
         updateQuestion()
     }
 }
