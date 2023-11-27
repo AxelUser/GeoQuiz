@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         Question(R.string.question_americas, true),
         Question(R.string.question_asia, true))
 
-    private val answeredIdx = hashSetOf<Int>()
+    private val answeredIdx = hashMapOf<Int, Boolean>()
 
     private var currentIndex = 0
 
@@ -87,8 +87,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkQuestion(userAnswer: Boolean) {
+        if (answeredIdx.containsKey(currentIndex)) return
         val correctAnswer = questionBank[currentIndex].answer
-        answeredIdx += currentIndex
+        answeredIdx[currentIndex] = correctAnswer
 
         val messageResId = if (userAnswer == correctAnswer) {
             R.string.correct_toast
@@ -97,5 +98,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+        if (answeredIdx.size == questionBank.size) {
+            val successRate = (answeredIdx.values.count { it }.toDouble() / answeredIdx.size) * 100
+            Toast.makeText(this, getString(R.string.success_rate, successRate.toInt()), Toast.LENGTH_SHORT).show()
+        }
     }
 }
