@@ -2,6 +2,8 @@ package com.bignerdranch.android.geoquiz
 
 import androidx.lifecycle.SavedStateHandle
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class QuizViewModelTest {
@@ -19,5 +21,15 @@ class QuizViewModelTest {
         assertEquals(R.string.question_asia, quizViewModel.currentQuestionText)
         quizViewModel.moveToNext()
         assertEquals(R.string.question_australia, quizViewModel.currentQuestionText)
+    }
+
+    @Test
+    fun providesRelevantQuestionAnswer() {
+        val savedStateHandle = SavedStateHandle()
+        val quizViewModel = QuizViewModel(savedStateHandle)
+        assertTrue(quizViewModel.currentQuestionAnswer)
+        quizViewModel.moveToNext()
+        quizViewModel.moveToNext()
+        assertFalse(quizViewModel.currentQuestionAnswer)
     }
 }
